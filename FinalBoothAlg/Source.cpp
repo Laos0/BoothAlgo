@@ -18,7 +18,59 @@ using namespace std;
 - output binary
 
 */
+int binToDec(vector<int> v1, vector<int> v2) {
+	string product = "";
+	int finalProduct = 0;
+	int rem = 0;
+	int temp = 0;
+	int base = 1;
+	int dec = 0;
+	for (int i = 0; i < v1.size(); i++) {
+		product += to_string(v1[i]);
+	}
+	for (int i = 0; i < v2.size() - 1; i++) {
+		product += to_string(v2[i]);
+	}
 
+	finalProduct = stoi(product);
+	temp = finalProduct;
+	while (temp) {
+		int lastDigit = temp % 10;
+		temp = temp / 10;
+		dec += lastDigit * base;
+		base = base * 2;
+	}
+
+	return dec;
+}
+string displayFinalProduct(vector<int>v1, vector<int>v2) {
+	string currentProduct;
+	string vec1 = "";
+	string vec2 = "";
+
+	for (int i = 0; i < v1.size(); i++) {
+		vec1 += to_string(v1[i]);
+	}
+	for (int i = 0; i < v2.size() - 1; i++) {
+		vec2 += to_string(v2[i]);
+	}
+	currentProduct = vec1 + " " + vec2;
+	return currentProduct;
+}
+string displayCurrentProduct(vector<int>v1, vector<int>v2) {
+	string currentProduct;
+	string vec1 = "";
+	string vec2 = "";
+
+	for (int i = 0; i < v1.size(); i++) {
+		vec1 += to_string(v1[i]);
+	}
+	for (int i = 0; i < v2.size(); i++) {
+		vec2 += to_string(v2[i]);
+	}
+	currentProduct = vec1 + " " + vec2;
+	return currentProduct;
+}
 string decToBin(int n) {// Convert decimal to binary
 	int num = n;
 	bitset<8> bin(num);
@@ -131,6 +183,7 @@ vector<int> addTwoBinary(vector<int> changingMcand, vector<int> fixedMcand) {
 vector<int> subTwoBinary(vector<int> changingMcand, vector<int> fixedMcand) {
 	vector<int> finalVec = changingMcand;
 	vector<int> negVec = convertBinaryToNegative(fixedMcand);
+
 	int carry = 0;
 	for (int i = 0; i < changingMcand.size(); i++) {
 		finalVec[finalVec.size() - 1 - i] = changingMcand[changingMcand.size() - 1 - i] + negVec[negVec.size() - 1 - i] + carry;
@@ -175,74 +228,6 @@ vector<int> mPlierARS(vector<int> changingMcand, vector<int> mPlier) {
 	}
 	return shiftRightMplier;
 }
-
-// what i am passing: displayBooth(iteration, multiplicand, multiplier, displayMcand) when iteration == 0
-// what i am passing: displayBooth(iteration, changingMcand, multiplier, displayMcand) when iteration > 0
-// The multiplicand is: 00000010 - 2
-// The changingMcand is: 00000010 - 2
-// The first iteration should be: 00000000 - negativeBinary(multiplicand)
-/*
-void displayBooth(int iteration, vector<int> mCand, vector<int> mPlier, vector<int> fixedMcand) {
-	cout << "======================================================================================================================" << endl;
-	string operation = "";
-	string multiplicand = "";
-	string mCandOnZero = "";
-	string multiplier = "";
-	string product = "";
-	string theMcand = "";
-
-	vector<int> tempMcand = mCand;
-	vector<int> displayMcand = fixedMcand;
-
-	if (iteration == 0) {
-		operation = "Initalization";
-		for (int i = 0; i < mCand.size(); i++) {
-			tempMcand[i] = 0;
-		}
-		for (int i = 0; i < tempMcand.size(); i++) {
-			mCandOnZero += to_string(tempMcand[i]);
-		}
-
-	}
-	else {
-		if (mPlier[mPlier.size() - 2] == 0 && mPlier[mPlier.size() - 1] == 0) {
-			operation = "No Operation";
-		}
-		else if (mPlier[mPlier.size() - 2] == 0 && mPlier[mPlier.size() - 1] == 1) {
-			operation = "Prod' = Prod' + mCand";
-		}
-		else if (mPlier[mPlier.size() - 2] == 1 && mPlier[mPlier.size() - 1] == 0) {
-			operation = "Prod' = Prod' - mCand";
-		}
-		else if (mPlier[mPlier.size() - 2] == 1 && mPlier[mPlier.size() - 1] == 1) {
-			operation = "No operation";
-		}
-	}
-
-	for (int i = 0; i < mCand.size(); i++) {
-		multiplicand += to_string(mCand[i]);
-		theMcand += to_string(displayMcand[i]);
-	}
-
-	for (int i = 0; i < mPlier.size(); i++) {
-		multiplier += to_string(mPlier[i]);
-	}
-	if (iteration == 0) {
-		product = mCandOnZero + " " + multiplier;
-	}
-	else {
-		product = theMcand + " " + multiplier;
-	}
-
-	cout << fixed << setprecision(20);
-	cout << left << setw(25) << iteration;
-	cout << right << setw(25) << operation;
-	cout << right << setw(25) << theMcand;
-	cout << right << setw(25) << product;
-	cout << "\n" << endl;
-
-}
-*/
 
 //displayBooth(current Iteration, changingMcand, currentMplier, the never changing Mcand )
 void displayBooth(int iter, vector<int> mCand, vector<int> mPlier, vector<int> fixedMcand, bool isShift, vector<int> shiftMcand, vector<int> shiftMplier) {
@@ -359,6 +344,8 @@ int main() {
 	int mPlier;
 	int iteration = 0;
 	int isAddSub = false;
+	bool isBothInputsNegative = false;
+	string currentProduct = "";
 
 	// These two variable is only used once to convert each char in teh string into an int and then pushed into a vector<int>
 	string cand;
@@ -370,6 +357,10 @@ int main() {
 	cout << "Please enter a multiplier." << endl;
 	cin >> mPlier;
 
+	// flag if the two inputs are negative
+	if (mCand < 0 && mPlier < 0) {
+		isBothInputsNegative = true;
+	}
 	// converting user mCand and mPlier to string binary
 	cand = decToBin(mCand);
 	plier = decToBin(mPlier);
@@ -380,13 +371,18 @@ int main() {
 	// ---------------------------------------------------------- end of converting mCand and mPlier string into a vector<int> -------------------------------------
 
 	// -------------------------------------------- TESTING TO SEE VISUALIZATIONS ------------------------------------------------------------------
+	cout << mCand << " in binary is: ";
 	displayVector(multiplicand);
 	cout << endl << endl;
+	cout << mPlier << " in binary is: ";
 	displayVector(multiplier);
+	cout << endl << endl;
+	cout << "The current product is: " << displayCurrentProduct(multiplicand, multiplier);
+
 
 	// add extra 0 to the mPlier vector or the right half of the product
 	cout << endl << endl;
-	cout << "Adding an extra zero at the end of the multiplier which is in the product..." << endl;
+	cout << "Adding an extra zero at the end of the multiplier which is in the right side of product..." << endl;
 	multiplier.push_back(0);
 	for (int j = 0; j < multiplier.size(); j++) {
 		cout << multiplier[j];
@@ -412,7 +408,8 @@ int main() {
 	// At iteration 1:
 	while (iteration < 9) {
 		if (multiplier[multiplier.size() - 2] == 0 && multiplier[multiplier.size() - 1] == 0) {
-
+			//throw invalid_argument("dont hit");
+			isAddSub = true;
 		}
 		else if (multiplier[multiplier.size() - 2] == 0 && multiplier[multiplier.size() - 1] == 1) {
 			changingMcand = addTwoBinary(changingMcand, multiplicand);
@@ -422,8 +419,12 @@ int main() {
 			changingMcand = subTwoBinary(changingMcand, multiplicand);
 			isAddSub = true;
 		}
-		else if (multiplier[multiplier.size() - 2] == 1 && multiplier[multiplier.size() - 1] == 0) {
-
+		else if (multiplier[multiplier.size() - 2] == 1 && multiplier[multiplier.size() - 1] == 1) {
+			//throw invalid_argument("dont hit");
+			isAddSub = true;
+		}
+		else {
+			throw invalid_argument("dont hit");
 		}
 		if (isAddSub) {
 			shiftMcand = mCandARS(changingMcand);
@@ -436,62 +437,14 @@ int main() {
 		iteration++;
 	}
 
+	int finalP = mCand * mPlier;
+	cout << endl << endl;
+	cout << "The product is: " << displayCurrentProduct(changingMcand, multiplier) << endl;
+	cout << "Take out the last bit at the end of the product." << endl;
+	cout << "Final product is: " << displayFinalProduct(changingMcand, multiplier) << endl;
+	cout << "Converting the final product to decimal is: " << finalP << endl;
+	//cout << "Converting the final product to decimal is: " << binToDec(changingMcand, multiplier);
 
-	while (iteration < 9) {
-
-		//********************** SOMETHING ABOUT WHEN TO USE CHANGING MULTIPLICAND AND CHANGINGMULTIPLICAND **************************
-		//displayBooth(current Iteration, changingMcand, currentMplier, the never changing Mcand )
-
-		/*
-		if (iteration == 0) {
-			displayBooth(iteration, changingMcand, multiplier,displayMcand, isAddSub);
-			changingMcand = returnFirstMCand(multiplicand);  // All the elements become 0's unless changed
-
-			if (multiplier[multiplier.size() - 2] == 0 && multiplier[multiplier.size() - 1] == 0) {
-
-			}
-			else if (multiplier[multiplier.size() - 2] == 0 && multiplier[multiplier.size() - 1] == 1) {
-				changingMcand = addTwoBinary(changingMcand, multiplicand);
-				isAddSub = true;
-			}
-			else if (multiplier[multiplier.size() - 2] == 1 && multiplier[multiplier.size() - 1] == 0) {
-				changingMcand = subTwoBinary(changingMcand, multiplicand);
-				isAddSub = true;
-			}
-			else if (multiplier[multiplier.size() - 2] == 1 && multiplier[multiplier.size() - 1] == 0) {
-
-			}
-		}
-		else { // startin gat iteration 1;
-			displayBooth(iteration, changingMcand, multiplier, displayMcand, isAddSub);
-			if (multiplier[multiplier.size() - 2] == 0 && multiplier[multiplier.size() - 1] == 0) {
-
-			}
-			else if (multiplier[multiplier.size() - 2] == 0 && multiplier[multiplier.size() - 1] == 1) {
-				changingMcand = addTwoBinary(multiplicand, changingMcand);
-				isAddSub = true;
-			}
-			else if (multiplier[multiplier.size() - 2] == 1 && multiplier[multiplier.size() - 1] == 0) {
-				changingMcand = subTwoBinary(multiplicand, changingMcand);
-				isAddSub = true;
-			}
-			else if (multiplier[multiplier.size() - 2] == 1 && multiplier[multiplier.size() - 1] == 0) {
-
-			}
-		}
-
-		if (isAddSub) {
-			shiftmCand = mCandARS(changingMcand);
-			displayBooth(iteration, shiftmCand, multiplier, displayMcand, isAddSub);
-		}
-		isAddSub = false;
-		iteration++;
-		*/
-
-
-
-
-	}
 	system("pause");
 	return 0;
 
